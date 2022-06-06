@@ -306,23 +306,3 @@ if(-not ('RunAsLoggedOnUser.ProcessExtensions.ProcessExtensions' -as [type]))
     Add-Type -ReferencedAssemblies 'System', 'System.Runtime.InteropServices' -TypeDefinition $Source -Language CSharp 
 
 }
-
-
-<## Example commands to use this function.  Example collects information from logged on users certificate store and saves it to a text file. ##
-
-$OutputFile = "C:\Temp\UserCertificates.log"
-[string[]]$UserParams="Write-Host 'Running script. Please wait......'"
-
-$UserParams+='Write-Output \"Collecting information for logged on user: $($env:USERNAME)\" | out-file \"' + $OutputFile + '\" -Append'
-
-$UserParams+='Write-Output \"=============================`n= List User Certificates`n=============================\" | out-file \"' + $OutputFile + '\" -Append'
-
-$UserParams+='Get-ChildItem Cert:\CurrentUser\my | select Thumbprint,Subject,FriendlyName,NotBefore,NotAfter,@{N=\"Template\";E={($_.Extensions | where-object{$_.oid.Friendlyname -match \"Certificate Template Information\"}).Format(0) -replace \"(.+)?=(.+)\((.+)?\", \"$2\"}},@{N=\"EKU\";E={$_.EnhancedKeyUsageList -join \";\"}},@{N=\"SubjectAlternativeName\";E={try{(($_.Extensions | Where-Object {$_.Oid.FriendlyName -match \"subject alternative name\"}).format(0) | %{($_.split(\",\") | where{$_ -match \"DNS Name\"})}) -join \";\"  }catch{}}} | fl | out-file \"' + $OutputFile + '\" -Append'
-   
-$UserParams+='Write-Output \"[Completed User Information]\" | out-file \"' + $OutputFile + '\" -Append'
-
-#The leading space in front of the script/command param, in this case RunAsUserName, is required. Out-Null is so "true" isnt' returned and added to the text file.
-#[RunAsLoggedOnUser.ProcessExtensions.ProcessExtensions]::StartProcessAsCurrentUser("c:\windows\system32\WindowsPowerShell\v1.0\powershell.exe", " $RunAsUserName; $CertInfoHeader; $CertInfo; $UserConnections; $FinishedUserInfo") | out-null    
-RunAsLoggedOnUser -Program "c:\windows\system32\WindowsPowerShell\v1.0\powershell.exe" -Params ($UserParams -join ";")
-
-## End Exmaple ##>
