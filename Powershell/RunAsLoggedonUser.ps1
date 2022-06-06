@@ -276,32 +276,7 @@ if(-not ('RunAsLoggedOnUser.ProcessExtensions.ProcessExtensions' -as [type]))
             }
         }
     }
-"@
-    #**Above code was originally compressed and converted to base64, but this started triggering antivirus on one of my test devices. To be safe, I've undone this compression for now.
-    #**Below commented out code was the code used to compress and decompress the above CSharp code.
-    <# This is the code used to compress the original string
-        $String | ForEach-Object {
-            $ms = New-Object System.IO.MemoryStream
-            $cs = New-Object System.IO.Compression.GZipStream($ms, [System.IO.Compression.CompressionMode]::Compress)
-            $sw = New-Object System.IO.StreamWriter($cs)
-            $sw.Write($_)
-            $sw.Close()
-            [System.Convert]::ToBase64String($ms.ToArray())  
-        }
-    #>
-
-    <#
-    #Decompress Source into variable to be used with Add-Type
-    $Source = $CompressedSource | ForEach-Object {
-        $compressedBytes = [System.Convert]::FromBase64String($_)
-        $ms = New-Object System.IO.MemoryStream
-        $ms.write($compressedBytes, 0, $compressedBytes.Length)
-        $ms.Seek(0,0) | Out-Null
-        $cs = New-Object System.IO.Compression.GZipStream($ms, [System.IO.Compression.CompressionMode]::Decompress)
-        $sr = New-Object System.IO.StreamReader($cs)
-        $sr.ReadToEnd()
-    } 
-    #>  
+"@    
 
     Add-Type -ReferencedAssemblies 'System', 'System.Runtime.InteropServices' -TypeDefinition $Source -Language CSharp 
 
