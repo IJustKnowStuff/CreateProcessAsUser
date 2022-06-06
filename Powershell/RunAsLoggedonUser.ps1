@@ -4,10 +4,7 @@ param([string]$Program,[string]$Params)
 
 #Test to see if the type is already added to the PS session. If not, add type.
 if(-not ('RunAsLoggedOnUser.ProcessExtensions.ProcessExtensions' -as [type]))
-{
-    #** Compression removed temporarily due to anti-malware false/positive 
-    #Compressed the Csharp source code as it's several pages long. To review, see "Decompress Source" below to convert it back to plain text code.
-    #CompressedSource = 
+{    
     $Source = @"
     using System;
     using System.Runtime.InteropServices;
